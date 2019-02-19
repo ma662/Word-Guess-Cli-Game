@@ -1,6 +1,6 @@
-function Letter (char, input) {
+function Letter (char) {
     // display character or blank placeholder _ 
-    this.input = input;
+    // this.input;
 
     this.char = char;
     this.guessed = false;
@@ -15,8 +15,8 @@ function Letter (char, input) {
         }
     };
 
-    this.checker = function () {
-        if (this.input === this.char) {
+    this.checker = function (input) {
+        if (input === this.char) {
             this.guessed = true;
         }
 
@@ -24,4 +24,21 @@ function Letter (char, input) {
     };
 };
 
-module.exports(Letter);
+module.exports = Letter;
+
+
+
+// var e = new Letter ('e');
+
+// console.log(e);
+
+// Letter {
+//     char: 'e',
+//     guessed: false,
+//     retChar: [Function],
+//     checker: [Function] }
+// }
+
+// e.input = '7';
+
+// console.log(e);
