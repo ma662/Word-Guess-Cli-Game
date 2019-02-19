@@ -1,0 +1,22 @@
+{
+  "name": "word-guess-cli-game",
+  "version": "1.0.0",
+  "description": "Simple CLI application. Try to guess the correct word!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ma662/Word-Guess-Cli-Game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ma662/Word-Guess-Cli-Game/issues"
+  },
+  "homepage": "https://github.com/ma662/Word-Guess-Cli-Game#readme",
+  "dependencies": {
+    "inquirer": "^6.2.2"
+  }
+}
