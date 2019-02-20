@@ -2,11 +2,39 @@ var Word = require('./Word');
 var Letter = require('./Letter');
 var inquirer = require("inquirer");
 
-var wordBank = ['guess'];
+var wordBank = ['guess', 'bedazzle', 'wallet'];
 
+var player = {
+    name : 'player00',
+    bio : 'default description',
+    wins : 0,
+    losses : 0,
 
+    show : function () { 
+        console.log("\n");
+        console.log ("Player: " + this.name);
+        console.log ("Bio: " + this.bio);
+        console.log ("Total Lifetime Wins: " + this.wins);
+        console.log("Losses: " + this.losses);
+        console.log("\n");
+        return;
+    },
 
-// console.log(word.length);
+    options : function() {
+        inquirer
+        .prompt([
+            {
+                name: "selection",
+                message: "choose an option",
+                type: 'list',
+                choices : [ '[ change name ]', '[ change bio ]', 'Back' ],
+            }
+        ])
+        .then(function(answer) {
+            console.log(answer);
+        });
+    },
+};
 
 var game = {
 
@@ -17,15 +45,20 @@ var game = {
                 name: "selection",
                 message: "Welcome to Word-Guess by Myles Alcala!",
                 type: 'list',
-                choices : ['Play', 'Quit'],
+                choices : ['New Game', 'Settings', 'Quit'],
             }
         ])
         .then(function(answer) {
-            console.log(answer);
+            // console.log(answer);
 
             switch (answer.selection) {
-                case 'Play' :
-                game.newRound();
+                case 'New Game' :
+                    game.newRound();
+                break;
+
+                case 'Settings' :
+                    player.show();
+                    player.options();
                 break;
 
                 case 'Quit' :
@@ -38,28 +71,29 @@ var game = {
                 break;
             }
 
-            console.log(answer.selection);
+            // console.log(answer.selection);
         });
-
     },
     
+    // vars
     lives : 10,
     score : 0,
-
 
     guess : '',
     history : [],
 
+    // funcs
     init : function () {
 
-        game.lives = 10;
-        game.score = 0;
-        game.guess = '',
-        game.history = [];
+        this.lives = 10;
+        this.score = 0;
+
+        this.guess = '';
+        this.history = [];
     },
 
     display : function () {
-        console.log(this.activeWord.retWord());
+        console.log(this.activeWord.retWord() + "\n");
         return;
     }, 
     
@@ -68,7 +102,7 @@ var game = {
 
         var rand = Math.floor(Math.random() * wordBank.length);
 
-        this.activeWord = new Word(wordBank[rand]); // Add Logic to Randomize
+        this.activeWord = new Word(wordBank[rand]);
         
         for (var i=0; i<this.activeWord.currentWord.length; i++) {
             letterObj = new Letter(this.activeWord.currentWord[i]);
@@ -76,11 +110,11 @@ var game = {
         }
         
         this.display();
-        this.processGuess();
+        this.receiveGuess();
         return;
     },
     
-    processGuess : function () {
+    receiveGuess : function () {
         inquirer
         .prompt([
             {
@@ -98,32 +132,40 @@ var game = {
             }
         ])
         .then(function(answer) {
-            game.run(answer);
+            game.processGuess(answer);
             return;
         });
     },
 
-    run : function (answer) {
+    processGuess : function (answer) {
         this.guess = answer.guess;
 
         // debugging        
         // console.log("this.guess : " + this.guess);
         // console.log("history contains guess :" + (this.history.indexOf(this.guess) > -1 ));
 
-        // if not in history, push guess to history
+        // if not in history, push guess to history and do stuff
         if ( !(this.history.indexOf(this.guess) > -1 ) ) {
             this.history.push(this.guess);
+            console.log("[ history ]");
             console.log(this.history);
 
             this.activeWord.checkLetter(this.guess);
             
-            this.calcLives(this.guess);
-            this.calcScore();
+            this.calcLives();
+            console.log(this.lives + " lives remaining.\n");
+
+            if (this.lives < 1) {
+                game.gameover();
+                return;
+            }
             
-            console.log("game.checkWin() is: " + this.checkWin());
+            // console.log("game.checkWin() is: " + this.checkWin());
             if (this.checkWin()) {
                 console.log("You win!");
                 console.log("Next one: ");
+
+                player.wins++;
                 this.newRound();
                 return;
             }            
@@ -133,11 +175,12 @@ var game = {
         }
 
         this.display();
-        this.processGuess();
+        this.receiveGuess();
         return;
     },
 
     checkWin : function () {
+        this.calcScore();
 
         // win condition
         if (game.score === this.activeWord.currentWord.length) {
@@ -150,9 +193,16 @@ var game = {
     },
 
     calcLives : function () { 
-        // if ()
+        if ( !(this.activeWord.currentWord.indexOf(this.guess) > -1) ) {
+            this.lives--;            
+        }
+    },
 
-        // return this.lives--;
+    gameover : function () {
+        console.log("GAME OVER \n");
+        player.losses++;
+        game.home();
+        return;
     },
 
     calcScore : function () { 
@@ -165,10 +215,10 @@ var game = {
         }
 
         game.score = score;
-        console.log("game.score is : " + game.score);
+        // console.log("game.score is : " + game.score);
+        return;
     },
 };
-
 
 function isLetter(str) {
     // return str.length === 1 && str.match(/[a-z]/i);
