@@ -1,4 +1,5 @@
-var Letter = require("./Letter.js");
+// var Letter =
+require("./Letter.js");
 
     // // constructor ex
     // console.log(Letter);
