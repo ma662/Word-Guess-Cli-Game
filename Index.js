@@ -2,7 +2,7 @@ var Word = require('./Word');
 var Letter = require('./Letter');
 var inquirer = require("inquirer");
 
-var wordBank = ['guess', 'bedazzle', 'wallet'];
+var wordBank = ['guess', 'bedazzle', 'wallet', 'saturday', 'january', 'february', 'cat', 'phone'];
 
 var player = {
     name : 'player00',
@@ -31,7 +31,7 @@ var player = {
             }
         ])
         .then(function(answer) {
-            console.log(answer);
+            // console.log(answer);
 
             switch (answer.selection) {
                 case '[ change name ]' : 
@@ -57,7 +57,6 @@ var player = {
                 message: "What do you want your new bio to be?",
                 type: 'input',
             }
-            
         ])
         .then(function(answer) {
             var newBio = answer['new-bio'];
@@ -84,6 +83,7 @@ var player = {
 
             player.showInfo();
             game.home();
+            return;
         });
     },
 };
@@ -122,8 +122,6 @@ var game = {
                 console.log("Default case stuff");
                 break;
             }
-
-            // console.log(answer.selection);
         });
     },
     
@@ -199,24 +197,26 @@ var game = {
         // if not in history, push guess to history and do stuff
         if ( !(this.history.indexOf(this.guess) > -1 ) ) {
             this.history.push(this.guess);
-            console.log("[ history ]");
+            console.log("[ guess history ]");
             console.log(this.history);
 
             this.activeWord.checkLetter(this.guess);
             
             this.calcLives();
-            console.log(this.lives + " lives remaining.\n");
-
+            
+            this.display();
+            
             if (this.lives < 1) {
-                game.gameover();
+                this.gameOver();
                 return;
             }
+            console.log(this.lives + " lives remaining.\n");
             
             // console.log("game.checkWin() is: " + this.checkWin());
             if (this.checkWin()) {
                 console.log("You win!");
                 console.log("Next one: ");
-
+                
                 player.wins++;
                 this.newRound();
                 return;
@@ -224,9 +224,9 @@ var game = {
         }
         else {
             console.log("\nYou've already guessed that letter");
+            this.display();
         }
 
-        this.display();
         this.receiveGuess();
         return;
     },
@@ -236,7 +236,6 @@ var game = {
 
         // win condition
         if (game.score === this.activeWord.currentWord.length) {
-            // return game.newRound();
             return true;
         }
         else {
@@ -250,7 +249,7 @@ var game = {
         }
     },
 
-    gameover : function () {
+    gameOver : function () {
         console.log("GAME OVER \n");
         player.losses++;
         game.home();
