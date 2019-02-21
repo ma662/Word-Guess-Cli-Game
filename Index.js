@@ -10,7 +10,7 @@ var player = {
     wins : 0,
     losses : 0,
 
-    show : function () { 
+    showInfo : function () { 
         console.log("\n");
         console.log ("Player: " + this.name);
         console.log ("Bio: " + this.bio);
@@ -32,6 +32,58 @@ var player = {
         ])
         .then(function(answer) {
             console.log(answer);
+
+            switch (answer.selection) {
+                case '[ change name ]' : 
+                    player.changeName();
+                break;
+
+                case '[ change bio ]' :
+                    player.changeBio();
+                break;
+
+                default : 
+                    game.home();
+                break;
+            }
+        });
+    },
+
+    changeBio : function () {
+        inquirer
+        .prompt([
+            {
+                name: "new-bio",
+                message: "What do you want your new bio to be?",
+                type: 'input',
+            }
+            
+        ])
+        .then(function(answer) {
+            var newBio = answer['new-bio'];
+            player.bio = newBio;
+
+            player.showInfo();
+            game.home();
+            return;
+        });
+    },
+
+    changeName : function () { 
+        inquirer
+        .prompt([
+            {
+                name: "new-name",
+                message: "What do you want your new name to be?",
+                type: 'input',
+            }
+        ])
+        .then(function(answer) {
+            var newName = answer['new-name'];
+            player.name = newName;
+
+            player.showInfo();
+            game.home();
         });
     },
 };
@@ -57,7 +109,7 @@ var game = {
                 break;
 
                 case 'Settings' :
-                    player.show();
+                    player.showInfo();
                     player.options();
                 break;
 
@@ -215,13 +267,11 @@ var game = {
         }
 
         game.score = score;
-        // console.log("game.score is : " + game.score);
         return;
     },
 };
 
 function isLetter(str) {
-    // return str.length === 1 && str.match(/[a-z]/i);
     return str.match(/[a-z]/i);
 }
 
